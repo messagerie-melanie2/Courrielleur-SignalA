@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "SignalA",
+  "version": "1.0",
+  "description": "Extension de signalement administrateur.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "signala@developpement-durable.fr"
+    }
+  },
+  "icons": {
+    "32": "skin/img/signala_logo_32.png"
+  },
+  "permissions": [
+    "messagesRead",
+    "messagesUpdate",
+    "compose"
+  ],
+  "experiment_apis": {
+    "signalaPrefs": {
+      "schema": "api/signalaPrefs-schema.json",
+      "parent": {
+        "scopes": [
+          "addon_parent"
+        ],
+        "script": "api/signalaPrefs.js",
+        "paths": [
+          [
+            "signalaPrefs"
+          ]
+        ]
+      }
+    }
+  },
+  "message_display_action": {
+    "default_icon": "skin/img/ban.png",
+    "default_title": "Signaler",
+    "default_label": "Signaler",
+    "default_popup": "popup/popup.html"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  }
+}

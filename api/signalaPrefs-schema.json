@@ -1,0 +1,20 @@
+[{
+  "namespace": "signalaPrefs",
+  "description": "Accès aux préférences Thunderbird natives et envoi silencieux pour le module SignalA.",
+  "functions": [
+    {
+      "name": "getBtSpam",
+      "type": "function",
+      "async": true,
+      "description": "Retourne la liste des destinations de signalement depuis les préférences signala.btspam.N.to / .libelle (poussées par Pacome).",
+      "parameters": []
+    },
+    {
+      "name": "setupAutoSendForNextCompose",
+      "type": "function",
+      "async": true,
+      "description": "Enregistre un observateur de fenêtre qui envoie automatiquement la prochaine fenêtre de composition qui s'ouvrira. Se désenregistre après envoi ou après 10 secondes.",
+      "parameters": []
+    }
+  ]
+}]

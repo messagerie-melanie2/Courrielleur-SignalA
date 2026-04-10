@@ -1,0 +1,25 @@
+
+/* Bouton Signaler dans la barre d'outils de composition */
+#signala-signaler {
+  list-style-image: url("chrome://signala/skin/img/ban.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+#signala-signaler:hover {
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+#signala-signaler[disabled] {
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+toolbar[iconsize="small"] #signala-signaler {
+  list-style-image: url("chrome://signala/skin/img/ban.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+/* Entrée de menu Signaler */
+#signala-menusignaler {
+  list-style-image: url("chrome://signala/skin/img/ban.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}

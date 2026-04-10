@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Signaler</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+
+  <div class="header">
+    <img src="../skin/img/ban.png" alt="" class="header-icon" width="16"
+      height="16">
+    <span class="header-title">Signaler ce message</span>
+  </div>
+
+  <div id="content">
+
+    <!-- État initial : chargement -->
+    <div id="view-loading" class="view">
+      <span class="spinner"></span>Chargement…
+    </div>
+
+    <!-- Liste des boutons de signalement (générée en JS) -->
+    <div id="view-destinations" class="view" style="display:none">
+      <p class="intro">Vous êtes sur le point de signaler ce mail aux administrateurs.</p>
+      <div id="destinations-list"></div>
+    </div>
+
+    <!-- Message d'information (aucun config, pas de message...) -->
+    <div id="view-info" class="view info" style="display:none"></div>
+
+    <!-- Résultat : succès ou erreur -->
+    <div id="view-status" class="view" style="display:none"></div>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

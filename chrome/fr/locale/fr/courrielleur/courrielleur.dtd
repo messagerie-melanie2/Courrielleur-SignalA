@@ -1,0 +1,4 @@
+<!-- messengercompose-overlay.xul -->
+<!ENTITY courrielleur.signaler.lib "Signaler">
+<!ENTITY courrielleur.signaler.bulle "Signaler ce message">
+<!ENTITY courrielleur.signaler.accesskey "S">

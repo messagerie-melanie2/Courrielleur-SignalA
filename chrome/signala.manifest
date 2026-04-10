@@ -1,0 +1,4 @@
+content  signala  signala/content/signala/
+skin  signala classic/1.0 ../skin/
+overlay  chrome://messenger/content/messengercompose/messengercompose.xul  chrome://signala/content/messengercompose-overlay.xul
+style  chrome://messenger/content/messengercompose/messengercompose.xul  chrome://signala/skin/signala.css

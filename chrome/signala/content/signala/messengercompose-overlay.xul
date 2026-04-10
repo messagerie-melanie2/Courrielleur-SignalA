@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://signala/skin/signala.css" type="text/css"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://signala/locale/signala.dtd">
+
+
+<overlay id="signala.compose" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="chrome://signala/content/messengercompose-overlay.js"/>
+
+  <!-- ajoute un raccourci clavier Ctrl+S depuis la fenetre de composition -->
+  <keyset id="tasksKeys">
+    <key id="key_signala_signaler" key="&signala.signaler.accesskey;" command="cmd_SignalaSignaler" modifiers="accel"/>
+  </keyset>
+  <commandset id="composeCommands">
+    <command id="cmd_SignalaSignaler" oncommand="cmdSignalaSignaler()"/>
+  </commandset>
+
+  <menupopup id="taskPopup">
+    <menuitem label="&signala.signaler.lib;"
+              id="signala-menusignaler"
+              accesskey="&signala.signaler.accesskey;"
+              class="menuitem-iconic"
+              insertbefore="tasksMenuAddressBook"
+              command="cmd_SignalaSignaler"/>
+  </menupopup>
+
+
+  <!-- ajoute le bouton 'Signaler' -->
+  <!-- le bouton est insere correctement dans la barre d'outils au demarrage par code -->
+  <toolbarpalette id="MsgComposeToolbarPalette">
+    <toolbarbutton class="toolbarbutton-1"
+                   id="signala-signaler"
+                   label="&signala.signaler.lib;"
+                   tooltiptext="&signala.signaler.bulle;"
+                   command="cmd_SignalaSignaler"/>
+  </toolbarpalette>
+
+
+</overlay>
