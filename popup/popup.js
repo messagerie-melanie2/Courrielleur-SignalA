@@ -48,23 +48,26 @@ function renderDestinations(destinations, messageId) {
   const list = document.getElementById('destinations-list');
 
   for (const dest of destinations) {
+    //let adminMail = dest.to;
+    let adminMail = "ludovic.derouin@i-carre.net";
+
     const btn = document.createElement('button');
     btn.className = 'dest-btn';
-    btn.dataset.libelle = dest.libelle || dest.to;
+    btn.dataset.libelle = dest.libelle || adminMail;
 
     // Label + adresse
     const spanLabel = document.createElement('span');
     spanLabel.className = 'btn-label';
-    spanLabel.textContent = dest.libelle || dest.to;
+    spanLabel.textContent = dest.libelle || adminMail;
 
     const spanAddr = document.createElement('span');
     spanAddr.className = 'btn-addr';
-    spanAddr.textContent = dest.to;
+    spanAddr.textContent = adminMail;
 
     btn.appendChild(spanLabel);
     btn.appendChild(spanAddr);
 
-    btn.addEventListener('click', () => doSignaler(dest.to, messageId, btn));
+    btn.addEventListener('click', () => doSignaler(adminMail, messageId, btn));
     list.appendChild(btn);
   }
 }

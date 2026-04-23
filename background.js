@@ -75,8 +75,29 @@ messenger.runtime.onMessage.addListener((msg, sender) => {
           { to, subject: msgDetails.subject }
         );
 
-        // Classe le message original comme indésirable
-        await messenger.messages.update(messageId, { junk: true });
+        // 1. Classe le message original comme indésirable
+        // (Cela entraine la suppression ou le non affichage sur Thunderbird ?)
+        //await messenger.messages.update(messageId, { junk: true });
+
+        // 2. Déplace le message dans le dossier Indésirables du compte
+        // (le marquage en indésirable ne déplace pas physiquement le message)
+        try {
+          const msgDetails2 = await messenger.messages.get(messageId);
+          const accountId = msgDetails2.folder?.accountId;
+          if (accountId) {
+            const junkFolders = await messenger.folders.query({
+              accountId,
+              specialUse: ["junk"]
+            });
+            if (junkFolders.length > 0) {
+              await messenger.messages.move([messageId], junkFolders[0].id);
+            } else {
+              console.warn("[SignalA] Aucun dossier Indésirables trouvé pour ce compte.");
+            }
+          }
+        } catch (exMove) {
+          console.warn("[SignalA] Impossible de déplacer le message dans les indésirables :", exMove);
+        }
 
       } catch (ex) {
         console.error("[SignalA] Erreur lors du signalement :", ex);
