@@ -48,8 +48,8 @@ function renderDestinations(destinations, messageId) {
   const list = document.getElementById('destinations-list');
 
   for (const dest of destinations) {
-    //let adminMail = dest.to;
-    let adminMail = "ludovic.derouin@i-carre.net";
+    let adminMail = dest.to;
+    //let adminMail = "ludovic.derouin@i-carre.net";
 
     const btn = document.createElement('button');
     btn.className = 'dest-btn';
