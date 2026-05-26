@@ -1,20 +1,33 @@
-[{
-  "namespace": "signalaPrefs",
-  "description": "Accès aux préférences Thunderbird natives et envoi silencieux pour le module SignalA.",
-  "functions": [
-    {
-      "name": "getBtSpam",
-      "type": "function",
-      "async": true,
-      "description": "Retourne la liste des destinations de signalement depuis les préférences signala.btspam.N.to / .libelle (poussées par Pacome).",
-      "parameters": []
-    },
-    {
-      "name": "setupAutoSendForNextCompose",
-      "type": "function",
-      "async": true,
-      "description": "Enregistre un observateur de fenêtre qui envoie automatiquement la prochaine fenêtre de composition qui s'ouvrira. Se désenregistre après envoi ou après 10 secondes.",
-      "parameters": []
-    }
-  ]
-}]
+[
+  {
+    "namespace": "signalaPrefs",
+    "description": "Accès aux préférences Thunderbird natives et redirection silencieuse pour le module SignalA.",
+    "functions": [
+      {
+        "name": "getBtSpam",
+        "type": "function",
+        "async": true,
+        "description": "Retourne la liste des destinations de signalement depuis les préférences signala.btspam.N.to / .libelle (poussées par Pacome).",
+        "parameters": []
+      },
+      {
+        "name": "redirectMessage",
+        "type": "function",
+        "async": true,
+        "description": "Effectue une vraie redirection RFC 5321 sans fenêtre de composition : lit le message original, injecte les en-têtes Resent-*, et envoie via nsIMsgSend.sendMessageFile().",
+        "parameters": [
+          {
+            "name": "messageId",
+            "type": "integer",
+            "description": "Identifiant WebExtension du message à rediriger."
+          },
+          {
+            "name": "toAddress",
+            "type": "string",
+            "description": "Adresse e-mail de destination (administrateur)."
+          }
+        ]
+      }
+    ]
+  }
+]

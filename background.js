@@ -3,7 +3,7 @@
  *
  * Gère deux actions :
  *   - "get_state"  : fournit à la popup les destinations et le messageId
- *   - "signaler"   : effectue le transfert et le marquage indésirable
+ *   - "signaler"   : effectue la redirection et le marquage indésirable
  */
 
 messenger.runtime.onMessage.addListener((msg, sender) => {
@@ -64,26 +64,22 @@ messenger.runtime.onMessage.addListener((msg, sender) => {
     (async () => {
       try {
 
-        // Enregistre l'observateur AVANT d'ouvrir la fenêtre de composition
-        await messenger.signalaPrefs.setupAutoSendForNextCompose();
-
-        const msgDetails = await messenger.messages.get(messageId);
-
-        await messenger.compose.beginForward(
-          messageId,
-          "forwardAsAttachment",
-          { to, subject: msgDetails.subject }
-        );
-
-        // 1. Classe le message original comme indésirable
-        // (Cela entraine la suppression ou le non affichage sur Thunderbird ?)
-        //await messenger.messages.update(messageId, { junk: true });
-
-        // 2. Déplace le message dans le dossier Indésirables du compte
-        // (le marquage en indésirable ne déplace pas physiquement le message)
+        // --- Phase d'envoi : redirection silencieuse sans fenêtre ---
+        // redirectMessage() lit le message, injecte les en-têtes Resent-*
+        // et envoie directement via SMTP. Aucune fenêtre ne s'ouvre.
         try {
-          const msgDetails2 = await messenger.messages.get(messageId);
-          const accountId = msgDetails2.folder?.accountId;
+          console.log(`[SignalA] Redirection de messageId=${messageId} vers ${to}...`);
+          await messenger.signalaPrefs.redirectMessage(messageId, to);
+          console.log("[SignalA] Redirection effectuée avec succès.");
+        } catch (ex) {
+          console.error("[SignalA] Erreur lors de la redirection :", ex);
+          throw ex;
+        }
+
+        // --- Déplace le message dans le dossier Indésirables du compte ---
+        try {
+          const msgDetails = await messenger.messages.get(messageId);
+          const accountId  = msgDetails.folder?.accountId;
           if (accountId) {
             const junkFolders = await messenger.folders.query({
               accountId,

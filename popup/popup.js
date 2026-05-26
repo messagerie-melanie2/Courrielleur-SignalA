@@ -92,7 +92,7 @@ async function doSignaler(adminAddress, messageId, clickedBtn) {
   }).catch(() => { }); // ignore l'erreur de contexte détruit
 
   // Feedback immédiat, puis fermeture
-  showStatus('success', 'La fenêtre de rédaction va s\'ouvrir.\nVeuillez envoyer le message pré-rempli.');
+  showStatus('success', 'Redirection en cours…\nLe message va être redirigé vers l\'administrateur.');
   setTimeout(() => window.close(), 2500);
 }
 
