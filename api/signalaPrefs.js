@@ -171,14 +171,32 @@ this.signalaPrefs = class extends ExtensionCommon.ExtensionAPI {
         let lt        = "";    // line terminator (détecté sur premier appel)
         let lts       = 0;    // longueur du terminateur
         let inFrom    = false;
+        let fromLines = "";    // accumule le From: complet (avec continuations)
         let replyTo   = "";
         let haveReplyTo = false;
         let resentHeadersWritten = false;
+
+        /**
+         * Écrit le From: accumulé (toutes les lignes de continuation incluses)
+         * et construit le Reply-To à partir de celui-ci.
+         */
+        function flushFrom() {
+          if (!fromLines) return;
+          // Écriture du From: complet avec toutes ses lignes de continuation
+          const fromOut = fromLines + "\r\n";
+          aFileOutputStream.write(fromOut, fromOut.length);
+          // Construit Reply-To à partir du From: complet
+          replyTo = fromLines.replace(/^[Ff]rom:/, "Reply-To:");
+          fromLines = "";
+          inFrom = false;
+        }
 
         const copyListener = {
           onStartRequest() {},
 
           onStopRequest(_req, _ctx, statusCode) {
+            // Flush du From: en cours si les en-têtes se terminent brutalement
+            flushFrom();
             // Écriture des résidus
             aFileOutputStream.write(leftovers, leftovers.length);
             aFileOutputStream.close();
@@ -233,6 +251,8 @@ this.signalaPrefs = class extends ExtensionCommon.ExtensionAPI {
 
                 // Fin des en-têtes
                 if (line === "") {
+                  // Écrit le From: accumulé s'il y en a un en cours
+                  flushFrom();
                   if (!haveReplyTo && replyTo) {
                     aFileOutputStream.write(replyTo + "\r\n", replyTo.length + 2);
                   }
@@ -245,10 +265,12 @@ this.signalaPrefs = class extends ExtensionCommon.ExtensionAPI {
                 // Gestion des continuations multi-lignes de "From:"
                 if (inFrom) {
                   if (line[0] === " " || line[0] === "\t") {
-                    replyTo += "\r\n" + line;
+                    // Continuation du From: → on accumule
+                    fromLines += "\r\n" + line;
                     continue;
                   } else {
-                    inFrom = false;
+                    // Fin du From: multi-ligne → on flush
+                    flushFrom();
                   }
                 }
 
@@ -258,10 +280,13 @@ this.signalaPrefs = class extends ExtensionCommon.ExtensionAPI {
                   else skipping = false;
                 }
 
-                // Construit Reply-To à partir de From:
+                // Détecte le début d'un From:
                 if (/^from: /i.test(line)) {
-                  replyTo = line.replace(/^[Ff]rom:/, "Reply-To:");
+                  // Ne pas écrire tout de suite : on accumule pour
+                  // capturer les éventuelles lignes de continuation
+                  fromLines = line;
                   inFrom = true;
+                  continue;   // on n'écrit pas encore, on attend les continuations
                 }
                 if (/^reply-to: /i.test(line)) {
                   haveReplyTo = true;
