@@ -171,32 +171,14 @@ this.signalaPrefs = class extends ExtensionCommon.ExtensionAPI {
         let lt        = "";    // line terminator (détecté sur premier appel)
         let lts       = 0;    // longueur du terminateur
         let inFrom    = false;
-        let fromLines = "";    // accumule le From: complet (avec continuations)
         let replyTo   = "";
         let haveReplyTo = false;
         let resentHeadersWritten = false;
-
-        /**
-         * Écrit le From: accumulé (toutes les lignes de continuation incluses)
-         * et construit le Reply-To à partir de celui-ci.
-         */
-        function flushFrom() {
-          if (!fromLines) return;
-          // Écriture du From: complet avec toutes ses lignes de continuation
-          const fromOut = fromLines + "\r\n";
-          aFileOutputStream.write(fromOut, fromOut.length);
-          // Construit Reply-To à partir du From: complet
-          replyTo = fromLines.replace(/^[Ff]rom:/, "Reply-To:");
-          fromLines = "";
-          inFrom = false;
-        }
 
         const copyListener = {
           onStartRequest() {},
 
           onStopRequest(_req, _ctx, statusCode) {
-            // Flush du From: en cours si les en-têtes se terminent brutalement
-            flushFrom();
             // Écriture des résidus
             aFileOutputStream.write(leftovers, leftovers.length);
             aFileOutputStream.close();
@@ -251,8 +233,6 @@ this.signalaPrefs = class extends ExtensionCommon.ExtensionAPI {
 
                 // Fin des en-têtes
                 if (line === "") {
-                  // Écrit le From: accumulé s'il y en a un en cours
-                  flushFrom();
                   if (!haveReplyTo && replyTo) {
                     aFileOutputStream.write(replyTo + "\r\n", replyTo.length + 2);
                   }
@@ -263,14 +243,17 @@ this.signalaPrefs = class extends ExtensionCommon.ExtensionAPI {
                 }
 
                 // Gestion des continuations multi-lignes de "From:"
+                // On accumule les continuations dans replyTo, mais on
+                // laisse chaque ligne passer au write normal ci-dessous
+                // (comportement identique à SimpleMailRedirect).
                 if (inFrom) {
                   if (line[0] === " " || line[0] === "\t") {
-                    // Continuation du From: → on accumule
-                    fromLines += "\r\n" + line;
-                    continue;
+                    replyTo += "\r\n" + line;
+                    // PAS de continue ici : la ligne de continuation
+                    // doit être écrite dans le fichier (elle fait
+                    // partie du From: original qu'on ne touche pas).
                   } else {
-                    // Fin du From: multi-ligne → on flush
-                    flushFrom();
+                    inFrom = false;
                   }
                 }
 
@@ -280,13 +263,10 @@ this.signalaPrefs = class extends ExtensionCommon.ExtensionAPI {
                   else skipping = false;
                 }
 
-                // Détecte le début d'un From:
+                // Construit Reply-To à partir de From:
                 if (/^from: /i.test(line)) {
-                  // Ne pas écrire tout de suite : on accumule pour
-                  // capturer les éventuelles lignes de continuation
-                  fromLines = line;
+                  replyTo = line.replace(/^[Ff]rom:/, "Reply-To:");
                   inFrom = true;
-                  continue;   // on n'écrit pas encore, on attend les continuations
                 }
                 if (/^reply-to: /i.test(line)) {
                   haveReplyTo = true;
