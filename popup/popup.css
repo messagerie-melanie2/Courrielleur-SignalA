@@ -23,6 +23,30 @@
   --warn-border:   #5a5a2a;
 }
 
+/* Thème clair */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:            #f5f5f5;
+    --header-bg:     #e8e8e8;
+    --text:          #1a1a1a;
+    --text-muted:    #666666;
+    --accent:        #cc3333;
+    --border:        #cccccc;
+    --btn-bg:        #ffffff;
+    --btn-hover-bg:  #f0f0f0;
+    --btn-border:    #cccccc;
+    --success-bg:    #e6f4e6;
+    --success-text:  #2a6a2a;
+    --success-border:#a0d0a0;
+    --error-bg:      #f4e6e6;
+    --error-text:    #6a2a2a;
+    --error-border:  #d0a0a0;
+    --warn-bg:       #f4f4e6;
+    --warn-text:     #6a6a2a;
+    --warn-border:   #d0d0a0;
+  }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -52,6 +76,16 @@ body {
 .header-icon {
   opacity: 0.85;
   flex-shrink: 0;
+  /* Le SVG report.svg est en couleur claire (#e3e3e3) — adapté aux fonds sombres.
+     En thème clair, on le rend sombre via un filtre. */
+  filter: none;
+}
+
+/* Thème clair : inverser l'icône claire pour qu'elle soit visible sur fond clair */
+@media (prefers-color-scheme: light) {
+  .header-icon {
+    filter: invert(1) brightness(0.3);
+  }
 }
 
 .header-title {
